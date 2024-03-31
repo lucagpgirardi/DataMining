@@ -1,0 +1,18 @@
+ptax = pd.read_csv('ptax.csv', sep=";")
+resultado_primario = pd.read_csv('resultado_primario.csv', sep=";")
+selic_meta = pd.read_csv('selic.csv', sep=";")
+ied = pd.read_csv('IED.csv', sep=";")
+dbgg_pib = pd.read_csv('DBGG_PIB.csv', sep=";")
+df = pd.merge(df, ied, on="Data", how="outer")
+df = pd.merge(df, ptax, on="Data", how="outer")
+df = pd.merge(df, resultado_primario, on="Data", how="outer")
+df = pd.merge(df, selic_meta, on="Data", how="outer")
+df = pd.merge(df, dbgg_pib, on="Data", how="outer")
+
+
+#Trataremos da base Selic igual fizemos antes, mas sem remover as aspas
+selic = selic.iloc[:,:2]
+selic['Data'] = pd.to_datetime(selic['Data'], format='%d/%m/%Y').dt.year
+selic = selic.groupby('Data', as_index=False).median()
+
+df_final = pd.merge(df_final, selic, on="Data", how="outer")
